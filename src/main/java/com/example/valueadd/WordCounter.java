@@ -1,25 +1,26 @@
 package com.example.valueadd;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.*;
 
 public class WordCounter {
-    private List<String> text;
+    //List of unique words in text, used to create alphabetically ordered output
     private List<String> uniqueWords;
-    public WordCounter() {
-        this.text = new ArrayList<>();
-        this.uniqueWords = new ArrayList<>();
-    }
 
+    // empty constructor
+    public WordCounter() {}
+
+    //Removes numbers and punctuation and splits string into separate words
     private List<String> Cleanup(String text){
         return Arrays.asList(text.split("[^\\p{IsAlphabetic}]+"));
     }
 
+    //Main function
+    //Generates dictionary (map) indexed by words, containing list of lists.
+    //value[0] -> count, only one elements
+    //value[1] -> positions, list
     private HashMap CountWords(String input){
-        text = Cleanup(input);
+        List<String> text = Cleanup(input);
         uniqueWords = new ArrayList<>();
         HashMap<String, List<List<Integer>>> answer = new HashMap<>();
         for(int i = 0; i < text.size(); i++){
@@ -41,11 +42,13 @@ public class WordCounter {
         }
         return answer;
     }
+
+    //converts map into json
     private JSONArray JSONConverter(HashMap<String, List<List<Integer>>> dict){
         Collections.sort(uniqueWords);
         JSONArray answer = new JSONArray();
         for(var word: uniqueWords){
-            JSONObject tmp = new JSONObject();
+            Map<String, String > tmp = new HashMap<>();
             tmp.put("slowo", word);
             tmp.put("powtorzenia", dict.get(word).get(0).get(0).toString());
             tmp.put("pozycje", dict.get(word).get(1).toString());
@@ -54,6 +57,7 @@ public class WordCounter {
         return answer;
     }
 
+    //executable function
     public JSONArray Proceed(String text){
         return JSONConverter(CountWords(text));
     }
